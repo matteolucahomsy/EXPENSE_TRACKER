@@ -22,5 +22,11 @@
         "amount": 10.0,
         "category": "transport",
         "date": "2026-05-21"
+    },
+    {
+        "title": "Pizza Hut",
+        "amount": 54.0,
+        "category": "food",
+        "date": "2026-05-21"
     }
 ]

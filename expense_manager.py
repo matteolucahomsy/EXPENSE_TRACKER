@@ -53,3 +53,12 @@ class ExpenseManager:
                     self.expenses.append(expense)
         except (FileNotFoundError, json.JSONDecodeError):
             self.expenses=[]
+    def search_expense(self, keyword):
+        found =False
+        for index,expense in enumerate(self.expenses, start=1):
+            if keyword.lower() in expense.title.lower():
+                print(f"{index}. {expense.title} - ${expense.amount} - {expense.category} - {expense.date}")
+                found = True
+        if not found:
+                print("No matching expenses found. ")
+

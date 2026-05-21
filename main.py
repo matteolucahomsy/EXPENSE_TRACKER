@@ -8,9 +8,10 @@ while True:
     print("1. Add Expense")
     print("2. Remove Expense")
     print("3. Update Expense")
-    print("4. View Expense")
-    print("5. Show total")
-    print("6. exit")
+    print("4. Search Expense")
+    print("5. View Expense")
+    print("6. Show total")
+    print("7. exit")
 
     choice=input("choose an option: ")
     if choice== "1":
@@ -39,13 +40,15 @@ while True:
         new_category=input("Enter new category: ")
 
         manager.update_expense(index,new_title,new_amount,new_category)
-        
     elif choice == "4":
-        manager.view_expenses()
+        keyword = input("Enter keyword to search: ")
+        manager.search_expense(keyword)    
     elif choice == "5":
+        manager.view_expenses()
+    elif choice == "6":
        total=manager.total_expenses()
        print(f"Total expenses: ${total}")
-    elif choice == "6":
+    elif choice == "7":
         print("Goodbye!")
         break
     else:
