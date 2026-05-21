@@ -11,7 +11,10 @@ while True:
     print("4. Search Expense")
     print("5. View Expense")
     print("6. Show total")
-    print("7. exit")
+    print("7. Show Statistics")
+    print("8. Set Budget")
+    print("9. Show Budget Status")
+    print("10. exit")
 
     choice=input("choose an option: ")
     if choice== "1":
@@ -49,6 +52,14 @@ while True:
        total=manager.total_expenses()
        print(f"Total expenses: ${total}")
     elif choice == "7":
+        manager.show_statistics()
+    elif choice== "8":
+        budget=float(input("Enter your budget: "))
+        manager.set_budget(budget)
+        print("Budget set!")
+    elif choice == "9":
+        manager.show_budget_status()
+    elif choice == "10":
         print("Goodbye!")
         break
     else:
