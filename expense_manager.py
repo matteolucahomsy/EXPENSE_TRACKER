@@ -1,5 +1,4 @@
 from expense import Expense
-import json
 import sqlite3
 class ExpenseManager:
     def __init__(self):
