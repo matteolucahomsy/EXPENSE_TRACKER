@@ -1,97 +1,100 @@
 from expense import Expense
 import json
+import sqlite3
 class ExpenseManager:
     def __init__(self):
-        self.expenses=[]
         self.budget= None
-        self.load_expenses()
     def add_expense(self,expense):
-        self.expenses.append(expense)
-        self.save_expenses()
-    def remove_expense(self,index):
-        if 0<= index<len(self.expenses):
-            removed= self.expenses.pop(index)
-            self.save_expenses()
-            print(f"{removed.title} removed successfully!")
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("""
+        INSERT INTO expenses (title,amount,category,date)
+        VALUES (?,?,?,?)
+        """,(
+            expense.title,
+            expense.amount,
+            expense.category,
+            expense.date
+        ))
+        conn.commit()
+        conn.close()
+        print("Expense added succesfully!")
+    def remove_expense(self,expense_id):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("DELETE FROM expenses WHERE id=? ", (expense_id,))
+        conn.commit()
+        if cursor.rowcount==0:
+            print("Expenses not found.")
         else:
-            print("Invalid expense index.")
-    def update_expense(self,index,new_title,new_amount,new_category):
-        if not (0 <= index < len(self.expenses)):
-            print("Invalid expense index.")
-            return False
-       
-        self.expenses[index].title= new_title
-        self.expenses[index].amount= new_amount
-        self.expenses[index].category = new_category
-
-        self.save_expenses()
-        print("Expens updated successfully!")
-        return True
+            print("Expense removed successfully!")
+        conn.close()
+    def update_expense(self,expense_id,new_title,new_amount,new_category):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("""UPDATE expenses SET title=?,amount=?,category=? WHERE id =? """,(
+            new_title,new_amount,new_category,expense_id
+        ))
+        conn.commit()
+        if cursor.rowcount ==0:
+            print("Expense not found.")
+        else:
+            print("Expense updated successfully!")
+        conn.close()
     def view_expenses(self):
-        if not self.expenses:
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM expenses")
+        expenses=cursor.fetchall()
+        conn.close()
+        if not expenses:
             print("No expenses found.")
             return
-        for index,expense in enumerate(self.expenses, start=1):
-            print(f"{index}. {expense.title} - ${expense.amount} - {expense.category} - {expense.date}")
+        for expense in expenses:
+            expense_id=expense[0]
+            title=expense[1]
+            amount=expense[2]
+            category=expense[3]
+            date=expense[4]
+            print(f"{expense_id}. {title} - ${amount} - {category} - {date}")
     def total_expenses(self):
-        total=sum(expense.amount for expense in self.expenses)
-        return total
-    def save_expenses(self):
-        data={
-            "budget": self.budget,
-            "expenses": [expense.to_dict() for expense in self.expenses]
-        }
-        with open("data.json", "w") as file:
-            json.dump(data,file, indent=4)
-    def load_expenses(self):
-        try:
-            with open("data.json", "r") as file:
-                data=json.load(file)
-                self.expenses=[]
-                if isinstance(data,list):
-                    self.budget=None
-                    expenses_data= data
-                else:
-                    self.budget=data.get("budget",None)
-                    expenses_data= data.get("expenses", [])
-                
-                for item in expenses_data:
-                    expense=Expense(
-                        item["title"],
-                        item["amount"],
-                        item["category"]
-                    )
-                    expense.date=item.get("date", "Unknown")
-                    self.expenses.append(expense)
-        except (FileNotFoundError, json.JSONDecodeError):
-            self.expenses=[]
-            self.budget= None
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT SUM(amount) FROM expenses")
+        total=cursor.fetchone()[0]
+        conn.close()
+        return total if total else 0
     def search_expense(self, keyword):
-        found =False
-        for index,expense in enumerate(self.expenses, start=1):
-            if keyword.lower() in expense.title.lower():
-                print(f"{index}. {expense.title} - ${expense.amount} - {expense.category} - {expense.date}")
-                found = True
-        if not found:
-                print("No matching expenses found. ")
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM expenses WHERE title LIKE ?",(f"%[keyword]%",))
+        results=cursor.fetchall()
+        conn.close()
+        if not results:
+            print("NO matching expenses found.")
+            return
+        for expense in results:
+            expense_id=expense[0]
+            title=expense[1]
+            amount=expense[2]
+            category=expense[3]
+            date=expense[4]
+            print(f"{expense_id}. {title} - ${amount} - {category} - {date}")
     def show_statistics(self):
-        if not self.expenses:
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT category,SUM(amount) FROM expenses GROUP BY category")
+        stats=cursor.fetchall()
+        conn.close()
+        if not stats:
             print("No expenses found.")
-            return 
-        stats={}
-        for expense in self.expenses:
-            category= expense.category.lower()
-            if category in stats:
-                stats[category]+=expense.amount
-            else:
-                stats[category] = expense.amount
+            return
         print("\n === Statistics by Category ===")
-        for category, total in stats.items():
+        for category, total in stats:
             print(f"{category}: ${total}")
 
     def set_budget(self,budget):
         self.budget=budget
-        self.save_expenses()
     def show_budget_status(self):
         total=self.total_expenses()
         print(f"\nTotal expenses: ${total}")

@@ -1,4 +1,5 @@
 from expense import Expense
+import database
 from expense_manager import ExpenseManager
 
 manager=ExpenseManager()
@@ -27,22 +28,16 @@ while True:
         print("Expense added successfully!")
     elif choice == "2":
         manager.view_expenses()
-        index=int(input("Enter expense number to remove: ")) -1
-        manager.remove_expense(index)
+        expense_id=int(input("Enter expense ID to remove: "))
+        manager.remove_expense(expense_id)
     elif choice == "3":
-        if not manager.expenses:
-            print("No expenses to update.")
-            continue
         manager.view_expenses()
-        index=int(input("Enter expense number to update: "))-1
-        if not (0<= index < len(manager.expenses)):
-            print("Invalid expense index.")
-            continue
+        expense_id=int(input("Enter expense id to update: ")) 
         new_title=input("Enter new title: ")
         new_amount=float(input("Enter new amount: "))
         new_category=input("Enter new category: ")
 
-        manager.update_expense(index,new_title,new_amount,new_category)
+        manager.update_expense(expense_id,new_title,new_amount,new_category)
     elif choice == "4":
         keyword = input("Enter keyword to search: ")
         manager.search_expense(keyword)    
