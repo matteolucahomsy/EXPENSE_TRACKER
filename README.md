@@ -1,62 +1,72 @@
-# 💰 Expense Tracker (Python Project)
+# 💰 Expense Tracker (Flask + SQLite)
 
-A simple command-line Expense Tracker built with Python.
+A simple but powerful **personal finance tracker web app** built with **Flask** and **SQLite**.
+
+It allows users to track expenses, set budgets, and visualize spending with a live dashboard.
 
 ---
 
 ## 🚀 Features
 
-- Add expenses
-- View expenses
-- Update expenses
-- Delete expenses
-- Search expenses
-- Filter by category
-- View statistics by category
-- Budget tracking system
-- Data persistence (JSON)
-- Automatic date tracking
+- ➕ Add expenses (title, amount, category, date)
+- ❌ Delete expenses
+- ✏️ Update expenses
+- 🔍 Search expenses
+- 📊 View statistics by category
+- 💰 Set budget
+- 📉 Live budget tracking (spent, remaining, used %)
+- 🟢 Progress bar visualization
+- 🗄️ SQLite database storage
 
 ---
 
 ## 🛠️ Tech Stack
 
-- Python 3
-- JSON storage
-- Object-Oriented Programming (OOP)
+- Python 🐍
+- Flask 🌐
+- SQLite 🗄️
+- HTML / CSS 🎨
+- Jinja2 templating
 
 ---
 
 ## 📂 Project Structure
+
 ```text
 expense_tracker/
 │
 ├── main.py
 ├── expense_manager.py
-├── database.py
+├── expense.py
 ├── expenses.db
 │
 ├── templates/
-│   └── index.html
+│ ├── index.html
+│ ├── stats.html
+│ └── edit.html
 │
 ├── static/
-│   └── style.css
+│ └── style.css
 │
 └── README.md
 ```
 
+
 ---
+
+## ⚙️ Installation
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/expense-tracker.git
+cd expense-tracker
 
 ## ▶️ How to Run
 
 ```bash
 python main.py
 ```
-## 🎯 Future Improvements
-- GUI version (Tkinter / React)
-- Database (SQLite)
-- Login system
-- Charts & graphs
+Then open: http://127.0.0.1:5000
 
 ## Author 
 Matteo Luca Homsy

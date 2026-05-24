@@ -8,6 +8,20 @@
 </head>
 <body>
     <h1>Expense Tracker</h1>
+    <div>
+        <h2>Budget: ${{  budget  }}</h2>
+        <h2>Spent: ${{  total  }}</h2>
+        <h2>Remaining: ${{ remaining  }}</h2>
+        <h2>Used: %{{ "%.2f"|format(percent)  }}</h2>
+    </div>
+    <div style="width:300px; background:#ddd; border-radius:10px;">
+        <div style="
+            width: {{ percent  }}%;
+            background: {{  color  }};
+            height: 20px;
+            border-radius: 10px;">
+        </div>
+    </div>
     <form method="POST" action="/add">
         <input type="text" name="title" placeholder="Title" required>
         <input type="number" step="0.01" name="amount" placeholder="Amount" required>
@@ -16,6 +30,10 @@
     </form>
     <form action="/stats" method="POST">
         <button>View Statistics</button>
+    </form>
+    <form method="POST" action="/set_budget">
+        <input type="number" step="0.01" name="budget" placeholder="Set Budget" required>
+        <button type="submit">Set Budget</button>
     </form>
     {%if expenses %}
         <ul>
@@ -29,7 +47,7 @@
                     <button type="submit">Delete</button>
                 </form>
                 <form action="/edit/{{ expense[0]  }}">
-                    <button typr="submit">Edit</button>
+                    <button type="submit">Edit</button>
                 </form>
             </li>
         {% endfor %}

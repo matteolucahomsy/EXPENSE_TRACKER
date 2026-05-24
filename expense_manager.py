@@ -3,6 +3,7 @@ import sqlite3
 class ExpenseManager:
     def __init__(self):
         self.budget= None
+        self.init_db()
     def add_expense(self,expense):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
@@ -62,7 +63,7 @@ class ExpenseManager:
         cursor.execute("SELECT SUM(amount) FROM expenses")
         total=cursor.fetchone()[0]
         conn.close()
-        return total if total else 0
+        return total or 0
     def search_expense(self, keyword):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
@@ -93,7 +94,12 @@ class ExpenseManager:
             print(f"{category}: ${total}")
 
     def set_budget(self,budget):
-        self.budget=budget
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("DELETE FROM budget")
+        cursor.execute("INSERT INTO budget (amount) VALUES(?)", (budget,))
+        conn.commit()
+        conn.close()
     def show_budget_status(self):
         total=self.total_expenses()
         print(f"\nTotal expenses: ${total}")
@@ -107,6 +113,32 @@ class ExpenseManager:
 
         if remaining <0 :
             print("You exceeded your budget!")
+    def init_db(self):
+
+        conn = sqlite3.connect("expenses.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS expenses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                amount REAL,
+                category TEXT,
+                date TEXT
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS budget (
+                id INTEGER PRIMARY KEY,
+                amount REAL
+            )
+        """)
+
+        conn.commit()
+        conn.close()
+
+
     def get_all_expenses(self):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
@@ -129,3 +161,24 @@ class ExpenseManager:
         conn.close()
         
         return data
+    def get_budget(self):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT amount FROM budget LIMIT 1")
+        result=cursor.fetchone()
+        conn.close()
+        return result[0] if result else 0
+    def get_budget_status(self):
+        budget=self.get_budget()
+        total=self.total_expenses()
+        remaining=budget-total
+        percent_used=0
+        if budget>0:
+            percent_used=(total/budget)*100
+        return{
+            "budget": budget,
+            "total": total,
+            "remaining": remaining,
+            "percent": percent_used
+
+        }

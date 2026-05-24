@@ -9,7 +9,14 @@ manager=ExpenseManager()
 @app.route("/")
 def home():
     expenses=manager.get_all_expenses()
-    return render_template("index.html",expenses=expenses)
+    status=manager.get_budget_status()
+    total=manager.total_expenses()
+    budget=manager.get_budget()
+
+    percent=(total/budget)*100 if budget>0 else 0
+    percent=float(percent)
+    color="red" if percent > 100 else "green"
+    return render_template("index.html",expenses=expenses,budget=status["budget"],total=status["total"],remaining=status["remaining"],percent=status["percent"],color=color)
 @app.route("/add",methods=["POST"])
 def add_expense():
     title=request.form["title"]
@@ -42,7 +49,11 @@ def update_expense(id):
 def stats():
     data=manager.get_statistics()
     return render_template("stats.html",data=data)
-
+@app.route("/set_budget",methods=["POST"])
+def set_budget():
+    budget=float(request.form["budget"])
+    manager.set_budget(budget)
+    return redirect("/")
 
 
 if __name__=="__main__":
