@@ -15,8 +15,15 @@ def home():
 
     percent=(total/budget)*100 if budget>0 else 0
     percent=float(percent)
-    color="red" if percent > 100 else "green"
-    return render_template("index.html",expenses=expenses,budget=status["budget"],total=status["total"],remaining=status["remaining"],percent=status["percent"],color=color)
+    color="red" if percent > 100 else "green" 
+    alert=""
+    if percent >= 100:
+        color= "red"
+        alert=" Budget exceeded!"
+    elif percent >=80:
+        color="orange"
+        alert="Warning.Budget almost reached!"
+    return render_template("index.html",expenses=expenses,budget=status["budget"],total=status["total"],remaining=status["remaining"],percent=status["percent"],color=color,alert=alert)
 @app.route("/add",methods=["POST"])
 def add_expense():
     title=request.form["title"]
