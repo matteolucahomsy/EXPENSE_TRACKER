@@ -32,9 +32,16 @@ A simple command-line Expense Tracker built with Python.
 expense_tracker/
 │
 ├── main.py
-├── expense.py
 ├── expense_manager.py
-├── data.json
+├── database.py
+├── expenses.db
+│
+├── templates/
+│   └── index.html
+│
+├── static/
+│   └── style.css
+│
 └── README.md
 ```
 

@@ -107,3 +107,10 @@ class ExpenseManager:
 
         if remaining <0 :
             print("You exceeded your budget!")
+    def get_all_expenses(self):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM expenses")
+        expenses=cursor.fetchall()
+        conn.close()
+        return expenses
