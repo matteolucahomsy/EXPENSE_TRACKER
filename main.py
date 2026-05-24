@@ -38,6 +38,11 @@ def update_expense(id):
 
     manager.update_expense(id,title,amount,category)
     return redirect("/")
+@app.route("/stats",methods=["POST"])
+def stats():
+    data=manager.get_statistics()
+    return render_template("stats.html",data=data)
+
 
 
 if __name__=="__main__":

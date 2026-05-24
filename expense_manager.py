@@ -121,3 +121,11 @@ class ExpenseManager:
         expenses=cursor.fetchone()
         conn.close()
         return expenses
+    def get_statistics(self):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT category,SUM(amount)  FROM expenses GROUP BY category")
+        data=cursor.fetchall()
+        conn.close()
+        
+        return data
