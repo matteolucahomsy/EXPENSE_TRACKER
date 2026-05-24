@@ -21,6 +21,12 @@
                 $ {{  expense[2]  }} -
                 {{  expense[3]  }} -
                 {{  expense[4]  }} 
+                <form action="/delete/{{ expense[0]  }}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+                <form action="/edit/{{ expense[0]  }}">
+                    <button typr="submit">Edit</button>
+                </form>
             </li>
         {% endfor %}
         </ul>

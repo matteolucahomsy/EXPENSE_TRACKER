@@ -1,4 +1,5 @@
 from expense import Expense
+import sqlite3
 import database
 from expense_manager import ExpenseManager
 from flask import Flask, render_template, request ,redirect
@@ -21,6 +22,23 @@ def add_expense():
     )
     manager.add_expense(expense)
     return redirect("/")
+@app.route("/delete/<int:id>",methods=["POST"])
+def delete_expense(id):
+    manager.remove_expense(id)
+    return redirect("/")
+@app.route("/edit/<int:id>")
+def edit_page(id):
+    expense=manager.get_expense_by_id(id)
+    return render_template("edit.html",expense=expense)
+@app.route("/update/<int:id>",methods=["POST"])
+def update_expense(id):
+    title=request.form["title"]
+    amount=float(request.form["amount"])
+    category=request.form["category"]
+
+    manager.update_expense(id,title,amount,category)
+    return redirect("/")
+
 
 if __name__=="__main__":
     app.run(debug=True)

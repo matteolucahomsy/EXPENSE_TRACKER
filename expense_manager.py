@@ -114,3 +114,10 @@ class ExpenseManager:
         expenses=cursor.fetchall()
         conn.close()
         return expenses
+    def get_expense_by_id(self,expense_id):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM expenses WHERE id = ?",(expense_id,))
+        expenses=cursor.fetchone()
+        conn.close()
+        return expenses

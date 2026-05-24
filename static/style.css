@@ -16,6 +16,11 @@ input{
 }
 button{
     padding: 10px 15px;
+    margin-left: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
 }
 ul{
