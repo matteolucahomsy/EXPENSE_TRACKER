@@ -1,22 +1,55 @@
 # 💰 Expense Tracker (Flask + SQLite)
 
-A simple but powerful **personal finance tracker web app** built with **Flask** and **SQLite**.
+A modern personal finance tracker built with **Flask**, **SQLite**, **Bootstrap**, and **Chart.js**.
 
-It allows users to track expenses, set budgets, and visualize spending with a live dashboard.
+This web application allows users to manage expenses, track budgets, and visualize spending using interactive charts and a clean dashboard UI.
 
 ---
 
 ## 🚀 Features
 
-- ➕ Add expenses (title, amount, category, date)
+✔ Add, edit, delete expenses  
+✔ Budget tracking system  
+✔ Live remaining balance calculation  
+✔ Progress bar (visual budget usage)  
+✔ Budget alerts (warning & danger levels)  
+✔ Category-based statistics  
+✔ Interactive charts (bar & pie)  
+✔ Clean Bootstrap dashboard UI  
+
+### 📌 Expense Management
+- ➕ Add expenses
+- ✏️ Edit expenses
 - ❌ Delete expenses
-- ✏️ Update expenses
-- 🔍 Search expenses
-- 📊 View statistics by category
-- 💰 Set budget
-- 📉 Live budget tracking (spent, remaining, used %)
-- 🟢 Progress bar visualization
-- 🗄️ SQLite database storage
+- 📋 View all expenses
+
+---
+
+### 💰 Budget System
+- Set a global budget
+- Track:
+  - Total spent
+  - Remaining balance
+  - Percentage used
+- Dynamic progress bar
+
+---
+
+### ⚠️ Budget Alerts
+- 🟢 Green → safe
+- 🟠 Orange → budget almost reached (>80%)
+- 🔴 Red → budget exceeded (>100%)
+
+Real-time alert messages are displayed on the dashboard.
+
+---
+
+### 📊 Statistics & Analytics
+Interactive charts using **Chart.js**:
+- 📈 Bar chart
+- 🥧 Pie chart
+
+Expenses are grouped by category for better visualization.
 
 ---
 
@@ -26,33 +59,33 @@ It allows users to track expenses, set budgets, and visualize spending with a li
 - Flask 🌐
 - SQLite 🗄️
 - HTML / CSS 🎨
-- Jinja2 templating
+- Bootstrap 5
+- Jinja2
+- Chart.js 📊
 
 ---
 
 ## 📂 Project Structure
 
-```text
+```txt
 expense_tracker/
 │
 ├── main.py
 ├── expense_manager.py
 ├── expense.py
 ├── expenses.db
+├── requirements.txt
 │
 ├── templates/
-│ ├── index.html
-│ ├── stats.html
-│ └── edit.html
+│   ├── index.html
+│   ├── stats.html
+│   └── edit.html
 │
 ├── static/
-│ └── style.css
+│   └── style.css
 │
 └── README.md
 ```
-
-
----
 
 ## ⚙️ Installation
 
@@ -60,13 +93,59 @@ expense_tracker/
 ```bash
 git clone https://github.com/your-username/expense-tracker.git
 cd expense-tracker
-
-## ▶️ How to Run
-
+```
+### 2.Install Flask
 ```bash
+pip install flask
+```
+### 3.Run the application
+```bash 
 python main.py
 ```
-Then open: http://127.0.0.1:5000
+### 4.Open in browser
+http://127.0.0.1:5000
+
+## 📸 Application Features
+
+### 🏠 Dashboard
+- Budget overview cards
+- Progress bar
+- Expense list
+
+### 📊 Statistics Page
+- Expense analytics
+- Interactive visual charts
+
+### ✏️ Edit Page
+- Update expense title
+- Update amount
+- Update category
+
+
+## 🧠 What I Learned
+
+This project helped me practice:
+
+- Flask routing
+- CRUD operations
+- SQLite database management
+- Jinja2 templating
+- Bootstrap UI development
+- Chart.js integration
+- Backend + frontend integration
+- Dashboard design principles
+
+
+## 🚀 Future Improvements
+
+Possible future upgrades:
+
+- 👤 User authentication
+- 📅 Monthly reports
+- 🔍 Advanced filtering
+- ☁️ Cloud deployment
+- 📱 Mobile responsive improvements
+- 📤 Export to PDF/Excel
 
 ## Author 
 Matteo Luca Homsy
