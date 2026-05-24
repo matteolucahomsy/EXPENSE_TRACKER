@@ -45,10 +45,15 @@ def update_expense(id):
 
     manager.update_expense(id,title,amount,category)
     return redirect("/")
-@app.route("/stats",methods=["POST"])
+@app.route("/stats",methods=["GET","POST"])
 def stats():
     data=manager.get_statistics()
-    return render_template("stats.html",data=data)
+    labels=[]
+    values=[]
+    for item in data:
+        labels.append(item[0])
+        values.append(item[1])
+    return render_template("stats.html",labels=labels,values=values)
 @app.route("/set_budget",methods=["POST"])
 def set_budget():
     budget=float(request.form["budget"])
