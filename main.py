@@ -3,16 +3,19 @@ import sqlite3
 import database
 from expense_manager import ExpenseManager
 from flask import Flask, render_template, request ,redirect, session
+from werkzeug.security import generate_password_hash,check_password_hash
 app=Flask(__name__)
 app.secret_key="secret123"
 manager=ExpenseManager()
 
 @app.route("/")
 def home():
-    expenses=manager.get_all_expenses()
-    status=manager.get_budget_status()
-    total=manager.total_expenses()
-    budget=manager.get_budget()
+    if "user_id" not in session:
+        return redirect("/login")
+    expenses=manager.get_all_expenses(session["user_id"])
+    status=manager.get_budget_status(session["user_id"])
+    total=manager.total_expenses(session["user_id"])
+    budget=manager.get_budget(session["user_id"])
 
     percent=(total/budget)*100 if budget>0 else 0
     percent=float(percent)
@@ -29,6 +32,8 @@ def home():
     return render_template("index.html",expenses=expenses,budget=status["budget"],total=status["total"],remaining=status["remaining"],percent=status["percent"],color=color,alert=alert)
 @app.route("/add",methods=["POST"])
 def add_expense():
+    if "user_id" not in session:
+        return redirect("/login")
     title=request.form["title"]
     amount=float(request.form["amount"])
     category=request.form["category"]
@@ -37,7 +42,7 @@ def add_expense():
         amount,
         category
     )
-    manager.add_expense(expense)
+    manager.add_expense(expense,session["user_id"])
     return redirect("/")
 @app.route("/delete/<int:id>",methods=["POST"])
 def delete_expense(id):
@@ -57,7 +62,10 @@ def update_expense(id):
     return redirect("/")
 @app.route("/stats",methods=["GET","POST"])
 def stats():
-    data=manager.get_statistics()
+    if "user_id" not in session:
+        return redirect("/login")
+    user_id=session["user_id"]
+    data=manager.get_statistics(user_id)
     labels=[]
     values=[]
     for item in data:
@@ -66,8 +74,20 @@ def stats():
     return render_template("stats.html",labels=labels,values=values)
 @app.route("/set_budget",methods=["POST"])
 def set_budget():
-    budget=float(request.form["budget"])
-    manager.set_budget(budget)
+    if "user_id" not in session:
+        return redirect("/login")
+    amount=float(request.form["budget"])
+    user_id=session["user_id"]
+    conn=sqlite3.connect("expenses.db")
+    cursor=conn.cursor()
+    cursor.execute("""
+    INSERT INTO budget(amount,user_id)
+    VALUES (?,?)
+    ON CONFLICT (user_id)
+    DO UPDATE SET amount=excluded.amount
+    """,(amount,user_id))
+    conn.commit()
+    conn.close()
     return redirect("/")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -76,6 +96,7 @@ def register():
     if request.method=="POST":
         username=request.form["username"]
         password=request.form["password"]
+        hashed_password=generate_password_hash(password)
 
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
@@ -84,7 +105,7 @@ def register():
         if existing_user:
             error="Username already exists.Try another one."
         else:
-            cursor.execute("INSERT INTO users (username,password) VALUES (?,?)",(username,password))
+            cursor.execute("INSERT INTO users (username,password) VALUES (?,?)",(username,hashed_password))
             conn.commit()
             conn.close()
             return redirect("/login")
@@ -98,11 +119,12 @@ def login():
         password=request.form["password"]
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=? AND password=?",(username,password))
+        cursor.execute("SELECT * FROM users WHERE username=?",(username,))
         user=cursor.fetchone()
         conn.close()
-        if user:
-            session["user"]=username
+        if user and check_password_hash(user[2], password):
+            session["user"]=user[1]
+            session["user_id"]=user[0]
             return redirect("/")
         else:
             error="Invalid username or password"

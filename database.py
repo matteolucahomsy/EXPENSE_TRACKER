@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS expenses(
                title TEXT,
                amount REAL,
                category Text,
-               date TEXT
+               date TEXT,
+               user_id INTEGER
 )
 """)
 cursor.execute("""
@@ -18,6 +19,12 @@ CREATE TABLE IF NOT EXISTS users(
                password TEXT
                );
 """)
-
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS budget(
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               amount REAL,
+               user_id INTEGER UNIQUE
+               );
+""")
 conn.commit()
 conn.close()

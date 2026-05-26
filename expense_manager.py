@@ -1,20 +1,22 @@
 from expense import Expense
+from flask import session
 import sqlite3
 class ExpenseManager:
     def __init__(self):
         self.budget= None
         self.init_db()
-    def add_expense(self,expense):
+    def add_expense(self,expense,user_id):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
         cursor.execute("""
-        INSERT INTO expenses (title,amount,category,date)
-        VALUES (?,?,?,?)
+        INSERT INTO expenses (title,amount,category,date, user_id)
+        VALUES (?,?,?,?,?)
         """,(
             expense.title,
             expense.amount,
             expense.category,
-            expense.date
+            expense.date,
+            user_id
         ))
         conn.commit()
         conn.close()
@@ -57,10 +59,10 @@ class ExpenseManager:
             category=expense[3]
             date=expense[4]
             print(f"{expense_id}. {title} - ${amount} - {category} - {date}")
-    def total_expenses(self):
+    def total_expenses(self,user_id):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
-        cursor.execute("SELECT SUM(amount) FROM expenses")
+        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?",(user_id,))
         total=cursor.fetchone()[0]
         conn.close()
         return total or 0
@@ -139,10 +141,10 @@ class ExpenseManager:
         conn.close()
 
 
-    def get_all_expenses(self):
+    def get_all_expenses(self,user_id):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
-        cursor.execute("SELECT * FROM expenses")
+        cursor.execute("SELECT * FROM expenses WHERE user_id=?",(user_id,))
         expenses=cursor.fetchall()
         conn.close()
         return expenses
@@ -153,28 +155,32 @@ class ExpenseManager:
         expenses=cursor.fetchone()
         conn.close()
         return expenses
-    def get_statistics(self):
+    def get_statistics(self,user_id):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
-        cursor.execute("SELECT category,SUM(amount)  FROM expenses GROUP BY category")
+        cursor.execute("SELECT category,SUM(amount)  FROM expenses WHERE user_id=? GROUP BY category",(user_id,))
         data=cursor.fetchall()
         conn.close()
         
         return data
-    def get_budget(self):
+    def get_budget(self,user_id):
         conn=sqlite3.connect("expenses.db")
         cursor=conn.cursor()
-        cursor.execute("SELECT amount FROM budget LIMIT 1")
+        cursor.execute("SELECT amount FROM budget WHERE user_id=?",(user_id,))
         result=cursor.fetchone()
         conn.close()
         return result[0] if result else 0
-    def get_budget_status(self):
-        budget=self.get_budget()
-        total=self.total_expenses()
-        remaining=budget-total
-        percent_used=0
-        if budget>0:
-            percent_used=(total/budget)*100
+    def get_budget_status(self,user_id):
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT amount FROM budget WHERE user_id=?",(user_id,))
+        budget=cursor.fetchone()
+        budget=budget[0] if budget else 0
+        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?",(user_id,))
+        total=cursor.fetchone()[0] or 0
+        remaining=budget - total
+        percent_used=(total/budget *100) if budget >0 else 0
+        conn.close()
         return{
             "budget": budget,
             "total": total,
