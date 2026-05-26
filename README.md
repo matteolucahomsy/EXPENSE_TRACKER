@@ -68,23 +68,29 @@ Expenses are grouped by category for better visualization.
 ## 📂 Project Structure
 
 ```txt
-expense_tracker/
+expense-tracker/
 │
 ├── main.py
+├── database.py
 ├── expense_manager.py
-├── expense.py
-├── expenses.db
-├── requirements.txt
+├── models/
+│   ├── expense.py
+│   └── user.py
 │
 ├── templates/
 │   ├── index.html
+│   ├── login.html
+│   ├── register.html
 │   ├── stats.html
 │   └── edit.html
 │
 ├── static/
 │   └── style.css
 │
-└── README.md
+├── expenses.db
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
 ## ⚙️ Installation
@@ -105,6 +111,10 @@ python main.py
 ### 4.Open in browser
 http://127.0.0.1:5000
 
+### Installation
+```bash
+pip install -r requirements.txt
+```
 ## 📸 Application Features
 
 ### 🏠 Dashboard
