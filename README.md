@@ -52,7 +52,12 @@ Interactive charts using **Chart.js**:
 Expenses are grouped by category for better visualization.
 
 ---
-
+## 👤 Multi-User System
+- User registration & login
+- Secure password hashing
+- Session-based authentication
+- Each user has isolated data (expenses + budget + stats)
+---
 ## 🛠️ Tech Stack
 
 - Python 🐍
@@ -62,6 +67,7 @@ Expenses are grouped by category for better visualization.
 - Bootstrap 5
 - Jinja2
 - Chart.js 📊
+- Werkzeug Security 🔐
 
 ---
 
@@ -73,6 +79,7 @@ expense-tracker/
 ├── main.py
 ├── database.py
 ├── expense_manager.py
+│
 ├── models/
 │   ├── expense.py
 │   └── user.py
@@ -111,7 +118,7 @@ python main.py
 ### 4.Open in browser
 http://127.0.0.1:5000
 
-### Installation
+### Instal dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -144,13 +151,13 @@ This project helped me practice:
 - Chart.js integration
 - Backend + frontend integration
 - Dashboard design principles
+- Session management
 
 
 ## 🚀 Future Improvements
 
 Possible future upgrades:
 
-- 👤 User authentication
 - 📅 Monthly reports
 - 🔍 Advanced filtering
 - ☁️ Cloud deployment
@@ -159,3 +166,7 @@ Possible future upgrades:
 
 ## Author 
 Matteo Luca Homsy
+
+## ⭐ Final Note
+
+This project started as a simple CRUD app and evolved into a multi-user finance tracker with analytics and dashboard system.
