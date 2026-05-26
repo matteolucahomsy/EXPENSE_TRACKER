@@ -2,8 +2,9 @@ from expense import Expense
 import sqlite3
 import database
 from expense_manager import ExpenseManager
-from flask import Flask, render_template, request ,redirect
+from flask import Flask, render_template, request ,redirect, session
 app=Flask(__name__)
+app.secret_key="secret123"
 manager=ExpenseManager()
 
 @app.route("/")
@@ -17,6 +18,8 @@ def home():
     percent=float(percent)
     color="red" if percent > 100 else "green" 
     alert=""
+    if "user" not in session:
+        return redirect("/login")
     if percent >= 100:
         color= "red"
         alert=" Budget exceeded!"
@@ -67,6 +70,47 @@ def set_budget():
     manager.set_budget(budget)
     return redirect("/")
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    error=None
+    if request.method=="POST":
+        username=request.form["username"]
+        password=request.form["password"]
+
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=?",(username,))
+        existing_user=cursor.fetchone()
+        if existing_user:
+            error="Username already exists.Try another one."
+        else:
+            cursor.execute("INSERT INTO users (username,password) VALUES (?,?)",(username,password))
+            conn.commit()
+            conn.close()
+            return redirect("/login")
+        conn.close()
+    return render_template("register.html",error=error)
+@app.route("/login", methods=["GET","POST"])
+def login():
+    error=None
+    if request.method=="POST":
+        username=request.form["username"]
+        password=request.form["password"]
+        conn=sqlite3.connect("expenses.db")
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=? AND password=?",(username,password))
+        user=cursor.fetchone()
+        conn.close()
+        if user:
+            session["user"]=username
+            return redirect("/")
+        else:
+            error="Invalid username or password"
+    return render_template("login.html",error=error)
+@app.route("/logout")
+def logout():
+    session.pop("user",None)
+    return redirect("/login")
 
 if __name__=="__main__":
     app.run(debug=True)
